@@ -1,8 +1,6 @@
 import { defineConfig } from "astro/config";
+import netlify from "@astrojs/netlify";
 
 export default defineConfig({
-  server: {
-    port: 4321,
-    host: true
-  }
+  adapter: netlify()
 });

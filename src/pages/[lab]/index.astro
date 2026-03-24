@@ -1,12 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getLocalLabs } from "../../lib/local-index";
-
-export function getStaticPaths() {
-  return getLocalLabs().map((lab) => ({
-    params: { lab: lab.slug }
-  }));
-}
+export const prerender = false; // Disable prerendering for dynamic lab pages
 
 const { lab } = Astro.params;
 const apiBase = (import.meta.env.PUBLIC_API_BASE_URL || "http://localhost:5050").replace(/\/$/, "");

@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "snapshot": "node scripts/snapshot-labs.mjs",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^6.0.8",
-    "@astrojs/netlify": "^7.0.4"
+    "astro": "^7.3.8"
   }
 }

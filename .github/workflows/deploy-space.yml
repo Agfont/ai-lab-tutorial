@@ -1,0 +1,62 @@
+# Build the static site and upload it to the Hugging Face Space on every push
+# to main. This is the only deploy path: the Space holds just the build
+# output, and each upload replaces its full contents.
+#
+# Needs an HF write token (fine-grained to the Space) stored as the
+# repository secret HF_TOKEN.
+name: Deploy to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deploys at once; a newer push replaces a queued one.
+concurrency:
+  group: deploy-space
+  cancel-in-progress: false
+
+env:
+  HF_SPACE_ID: Agfont/ai-lab-tutorial
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Build site
+        run: |
+          npm ci
+          npm run build
+
+      # The Space reads its config from the YAML block in its own README.
+      - name: Add Space config
+        run: cp space/README.md dist/README.md
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Hugging Face CLI
+        run: pip install "huggingface_hub==2.2.0"
+
+      # --delete '*' removes Space files that are no longer in dist/; files
+      # being uploaded are never deleted. The commit message names the
+      # source commit so each deploy can be traced back to GitHub.
+      - name: Upload to Space
+        run: >
+          hf upload "$HF_SPACE_ID" dist .
+          --type space
+          --delete '*'
+          --commit-message "Deploy ${GITHUB_SHA::7}"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}

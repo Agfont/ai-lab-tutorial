@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { labs } from "../data/snapshot";
+import { url } from "../utils/url";
 ---
 
 <BaseLayout
@@ -17,7 +18,7 @@ import { labs } from "../data/snapshot";
             <span class="chip">{lab.tasks.length} tasks</span>
           </div>
           <h2 style="margin: .65rem 0 .45rem;">{lab.title}</h2>
-          <a class="link-button" href={`/${lab.slug}/`}>Open Lab</a>
+          <a class="link-button" href={url(`${lab.slug}/`)}>Open Lab</a>
         </article>
       ))}
     </div>

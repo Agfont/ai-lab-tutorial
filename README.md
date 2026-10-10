@@ -1,12 +1,17 @@
 # Tutorial Frontend (Astro)
 
-This UI maps each lab folder from the repository to a route and each task to one or more REST API calls served by the Flask backend.
+A static site that turns each lab folder of the `ai-agents-basic` repo into a
+page, and each task into a page showing its source and recorded run output.
 
 ## Routes
 
-- `/` lists all lab directories discovered by the API.
-- `/:lab/` shows task cards for a specific lab directory.
-- `/:lab/tasks/:task/` shows task source, marker status, and run controls.
+- `/` lists all labs in the snapshot.
+- `/:lab/` shows the lab overview and its task cards.
+- `/:lab/tasks/:task/` shows the task source, completion marker status, and
+  recorded output.
+
+Lab overviews and per-task summaries are hand-written in `src/data/labs.ts`;
+update them when a lab's tasks change.
 
 ## Data source
 
@@ -32,11 +37,28 @@ npm run dev
 
 Default URL: `http://localhost:4321`
 
-## Deploy to Hostinger
+## Deploy to Hugging Face Spaces
 
-```bash
-npm run build
-```
+The site is hosted on the private static Space
+[`Agfont/ai-lab-tutorial`](https://huggingface.co/spaces/Agfont/ai-lab-tutorial).
+GitHub is the source of truth; the Space holds only build output.
 
-Upload the contents of `dist/` to the domain's `public_html` folder in
-Hostinger (File Manager or FTP). It doesn't need a Node.js app slot.
+Deployment is handled entirely by GitHub Actions. Every push to `main` runs
+`.github/workflows/deploy-space.yml`, which:
+
+1. builds the site with Node 26,
+2. copies `space/README.md` (the Space config) into `dist/`,
+3. uploads `dist/` as the Space's full contents, with the source commit hash
+   as the commit message. Files in the Space that are no longer in `dist/`
+   are deleted.
+
+It can also be started by hand from the repo's Actions tab ("Run workflow").
+Don't edit the Space directly, because the next deploy overwrites it.
+
+The workflow needs a Hugging Face **write** token, fine-grained to this Space
+only, saved as the repository secret `HF_TOKEN` (Settings → Secrets and
+variables → Actions).
+
+Internal links are built with `url()` from `src/utils/url.ts` rather than
+hard-coded `/` paths, so the site keeps working if `base` is ever set in
+`astro.config.mjs`.

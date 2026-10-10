@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { LAB_OVERVIEWS, LAB_TASK_SUMMARIES } from "../../data/labs";
 import { labs, type Lab } from "../../data/snapshot";
+import { url } from "../../utils/url";
 
 export function getStaticPaths() {
   return labs.map((labData) => ({ params: { lab: labData.slug }, props: { labData } }));
@@ -27,7 +28,7 @@ const currentTaskSummaries = LAB_TASK_SUMMARIES[lab] || [
   <section class="card">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <h2 style="margin:0.5rem 0;">Tasks</h2>
-      <a class="link-button secondary" href="/">Back to labs</a>
+      <a class="link-button secondary" href={url()}>Back to labs</a>
     </div>
     <div class="chips" style="margin-bottom:.8rem;">
       <span class="chip mono">{lab}</span>
@@ -57,7 +58,7 @@ const currentTaskSummaries = LAB_TASK_SUMMARIES[lab] || [
             <span class={`chip ${task.marker_complete ? "ok" : ""}`}>{task.marker_complete ? "Complete" : "Not complete"}</span>
           </div>
           <h3 style="margin:.6rem 0;">Task {task.id}: {task.title}</h3>
-          <a class="link-button" href={`/${lab}/tasks/${task.id}/`}>Open Task</a>
+          <a class="link-button" href={url(`${lab}/tasks/${task.id}/`)}>Open Task</a>
           <details style="margin-top:.7rem;">
             <summary>Show recorded output</summary>
             <pre class="mono">{task.output ?? "No recorded output for this task."}</pre>

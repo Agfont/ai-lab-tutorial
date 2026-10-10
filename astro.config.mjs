@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
-import netlify from "@astrojs/netlify";
 
+// Fully static output: `npm run build` produces dist/ for upload to Hostinger public_html.
 export default defineConfig({
-  adapter: netlify()
+  output: "static",
+  trailingSlash: "always"
 });
